@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>upload</title>
+    <meta name="content-type" content="text/html; charset=UTF-8"></meta>
+    <script th:src="@{/js/jquery-3.2.1.js}"></script>
+
+</head>
+
+<body>
+<form enctype="multipart/form-data" method="post" action="/testupload">
+    <input type="file" name="file"/>
+    <input type="submit" value="上传"/>
+</form>
+    <div th:if="${not #lists.isEmpty(list)}">
+        <table class="panel panel-primary">
+
+
+                <ul class="list-group">
+                    <tr>
+                        <td>姓名</td>
+                        <td>电话</td>
+                        <td>收货地址</td>
+                        <td>商品名称</td>
+                        <td>数量</td>
+
+                    </tr>
+                    <tr  th:each="person : ${list}">
+                        <td th:text="${person.name}"></td>
+                        <td th:text="${person.tel}"></td>
+                        <td th:text="${person.address}"></td>
+                        <td th:text="${person.goods}"></td>
+                        <td th:text="${person.count}"></td>
+                    </tr>
+                </ul>
+            </table>
+        </div>
+
+</body>
+</html>

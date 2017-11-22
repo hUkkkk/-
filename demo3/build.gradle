@@ -1,0 +1,67 @@
+/*
+#声明项目引入java插件、spring-boot及测试插件
+*/
+apply plugin: 'java'
+apply plugin: 'org.unbroken-dome.test-sets'
+apply plugin: 'spring-boot'
+/*
+#声明java源码的版本
+*/
+sourceCompatibility = 1.7
+/*
+#声明gradle生成class文件的版本
+*/
+targetCompatibility = 1.7
+/*#buildscript指定构建脚本段，repositories指定脚本段使用maven中央仓库
+#dependencies指定脚本段使用的依赖：
+#1、我们引入springboot的gradle插件，该插件制定了后续所有引入的#springboot依赖的来源和版本，后面声明具体依赖的时候讲不在指定依赖版#本，
+#2、引入gradle测试集插件，作为项目的测试插件，后续再使用gradle构建项目时实现自动测试*/
+buildscript {
+	repositories {
+		maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+	}
+	dependencies {
+		classpath(
+				'org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE',
+				'org.unbroken-dome.gradle-plugins:gradle-testsets-plugin:1.0.2'
+		)
+	}
+}
+
+/*
+#声明当前项目做使用的依赖库
+*/
+repositories {
+	maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+}
+
+/*
+#声明当前项目的具体依赖，1、在complie我们先引入以下两个依赖，后续再具体使用的时候我们会引入新的依赖，2、在testComplie中引入springboot提供的测试依赖，
+*/
+dependencies {
+	compile(
+			'org.springframework.boot:spring-boot-starter-actuator',
+			'org.springframework.boot:spring-boot-starter-web',
+			'org.springframework.boot:spring-boot-devtools',
+			'org.springframework.boot:spring-boot-starter-thymeleaf',
+			'org.apache.poi:poi:3.9'
+	)
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+/*
+#以下为针对gradle自动化测试的相关配置，这里暂时不做解释
+*/
+testSets {
+	integrationTest { dirName = 'integration-test' }
+}
+
+project.integrationTest {
+	outputs.upToDateWhen { false }
+}
+
+check.dependsOn integrationTest
+integrationTest.mustRunAfter test
+
+tasks.withType(Test) {
+	reports.html.destination = file("${reporting.baseDir}/${name}")
+}
